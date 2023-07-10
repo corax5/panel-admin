@@ -7,7 +7,16 @@ const projects = [
         id: 1, 
         projectName: "projecto de prueba",
         projectUrl: "afsdfgsgsdgds"
-    }
+    },
+   { id: 2, 
+    projectName: "projecto de prueba2",
+    projectUrl: "afsdfgsgsdgds2"
+},
+{
+    id: 3, 
+    projectName: "projecto de prueba3",
+    projectUrl: "afsdfgsgsdgds3"
+},
 ]
 
 export default function handler(
@@ -16,6 +25,7 @@ export default function handler(
 ) {
     if(req.method === "GET") {
         // parte 1 de la tarea aqui
+        res.status(200).json({ data: projects }) 
     }
 
     if(req.method === "POST") {

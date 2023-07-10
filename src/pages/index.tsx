@@ -38,6 +38,7 @@ export default function Home() {
       });
       setIsLoggedIn(true);
       setSessionToken(data.token);
+      getProject();
     } catch (error) {
       alert(error);
     }
@@ -68,6 +69,24 @@ export default function Home() {
       });
       console.log(data);
       alert("projecto generado");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [state, setState] = useState([]);
+
+  const getProject = async () => {
+    try {
+      let{ data } = await axios.get("/api/projects", {
+        headers: {
+          token: sessionToken,
+        },
+      });
+    //  data = await data.json();
+        setState(data.data);
+      
+      console.log("esta es mi data", data);
     } catch (error) {
       console.log(error);
     }
@@ -104,10 +123,19 @@ export default function Home() {
           2. mostrar la lista de proyectos en la aplicacion. hacer una funcion
           que llame a la lista de proyectos cuando entramos en la aplicacion
           pistas: useEffect, axios, useState
+          {
+          state ?
+            state.map((e:any) => (
+                <a key={e?.id}>
+                <h2> {e?.projectName} &rarr;</h2>
+                <p>{e?.projectUrl}</p>
+            </a>
+            ))
+           :"" 
+           }
         </p>
       </>
     );
-
   return (
     <>
       <div className={styles.loginContainer}>
