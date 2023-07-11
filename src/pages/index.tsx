@@ -156,7 +156,7 @@ export default function Home() {
             value={loginForm.password}
             onChange={(e) => handleFormChange(e)}
           />
-          <button onClick={handleSubmit}>Login</button>
+          <button className="btn btn-primary" onClick={handleSubmit}>Login</button>
         </div>
       </div>
     </>
