@@ -5,16 +5,16 @@ import { headers } from 'next/dist/client/components/headers'
 const projects = [
     {
         id: 1, 
-        projectName: "projecto de prueba",
+        projectName: "proyecto de prueba",
         projectUrl: "afsdfgsgsdgds"
     },
    { id: 2, 
-    projectName: "projecto de prueba2",
+    projectName: "proyecto de prueba2",
     projectUrl: "afsdfgsgsdgds2"
 },
 {
     id: 3, 
-    projectName: "projecto de prueba3",
+    projectName: "proyecto de prueba3",
     projectUrl: "afsdfgsgsdgds3"
 },
 ]

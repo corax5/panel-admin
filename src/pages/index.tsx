@@ -45,7 +45,7 @@ export default function Home() {
   };
   async function getProjects() {
     try {
-      const { data } = await axios.get("/api/project");
+      const { data } = await axios.get("/api/projects");
       console.log("🚀 ~ file: index.tsx:53 ~ getProjects ~ data:", data);
       setState(data.data);
     } catch (error) {
@@ -70,7 +70,7 @@ export default function Home() {
 
   const createProject = async () => {
     try {
-      const { data } = await axios.post("/api/project", createProjectFrom, {
+      const { data } = await axios.post("/api/projects", createProjectFrom, {
         headers: {
           token: sessionToken,
         },
@@ -101,13 +101,13 @@ export default function Home() {
                   height="38"
                 />
                 <div className="lh-1">
-                  <h1 className="h6 mb-0 text-white lh-1">Bootstrap</h1>
-                  <small>Since 2011</small>
+                  <h1 className="h6 mb-0 text-white lh-1"></h1>
+                  <small></small>
                 </div>
               </div>
 
               <div className="my-3 p-3 bg-body rounded shadow-sm">
-                <h6 className="border-bottom pb-2 mb-0">Proyectos</h6>
+                <h6 className="border-bottom pb-2 mb-0 ">Proyectos</h6>
 
                 {state
                   ? state.map((p: any) => (
@@ -129,9 +129,9 @@ export default function Home() {
                           <rect
                             width="100%"
                             height="100%"
-                            fill="#007bff"
+                            fill="#33E459"
                           ></rect>
-                          <text x="50%" y="50%" fill="#007bff" dy=".3em">
+                          <text x="50%" y="50%" fill="#33E459" dy=".3em">
                             32x32
                           </text>
                         </svg>
@@ -149,13 +149,14 @@ export default function Home() {
                     ))
                   : ""}
 
-                <small className="d-block text-end mt-3">
+                <small className="d-block text-end mt-3 d-flex justify-content-center ">
                   <a href="#">Crear nuevo</a>
                 </small>
               </div>
-              <div className="col-6">
-              <p>FORMULARIO DE CREAR PROYECTO</p>
-              <div className="text-center">
+              <div className="d-flex justify-content-center">
+              <div className="col-6 ">
+              <p className="d-flex justify-content-center">FORMULARIO DE CREAR PROYECTO</p>
+              <div className="text-center ">
                 <label>Nombre de proyecto</label>
                 <form className="form-control">
                   <input
@@ -174,13 +175,14 @@ export default function Home() {
                     value={createProjectFrom.imageUrl}
                   />
                   <button
-                    className="btn btn-primary mt-2"
+                    className="btn btn-primary mt-2 bg-success"
                     onClick={createProject}
                   >
                     create project
                   </button>
                 </form>
               </div>
+            </div>
             </div>
             {/* <ul>
           {
@@ -201,8 +203,8 @@ export default function Home() {
     <>
       <div className={styles.loginContainer}>
         <form>
-          <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
-          <div className="form-floating">
+          <h1 className="h3 mb-3 fw-normal">Panel de registro</h1>
+          <div className="form-floating ">
             <input
               type="email"
               className="form-control"
@@ -211,7 +213,7 @@ export default function Home() {
               onChange={(e) => handleFormChange(e)}
               value={loginForm.username}
             />
-            <label>User name</label>
+            <label>Nombre de usuario</label>
           </div>
           <div className="form-floating">
             <input
@@ -223,14 +225,14 @@ export default function Home() {
               className="form-control"
               placeholder="Password"
             />
-            <label>Password</label>
+            <label>Contraseña</label>
           </div>
           <button
             onClick={handleSubmit}
-            className="btn btn-primary w-100 py-2"
+            className="btn btn-primary w-100 py-2 bg-success"
             type="submit"
           >
-            Sign in
+            Iniciar sesión
           </button>
         </form>
 
