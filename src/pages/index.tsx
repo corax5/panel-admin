@@ -10,7 +10,7 @@ export default function Home() {
   const [sessionToken, setSessionToken] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [state, setState] = useState([]);
@@ -22,32 +22,48 @@ export default function Home() {
     });
   };
 
+  useEffect(() => {
+    let session = localStorage.getItem("TokenSession") || "";
+
+    if (session) {
+      setIsLoggedIn(true);
+      setSessionToken(session);
+    }
+  }, []);
+
   const handleSubmit = async () => {
-    if (loginForm.username.length <= 0)
-      return alert("el username no puede estar vacio");
+    if (loginForm.email.length <= 0)
+      return alert("el email no puede estar vacio");
     if (loginForm.password.length <= 0)
       return alert("el password no puede estar vacio");
 
     try {
-      const { data } = await axios.post("/api/login", loginForm);
+      const { data } = await axios.post(
+        process.env.NEXT_PUBLIC_API + "/auth/login",
+        loginForm
+      );
       // data nos retornara si el login ha sido correcto y un token de sesion de ser asi
-      console.log(data);
+      console.log("🚀 ~ file: index.tsx:35 ~ handleSubmit ~ data:", data);
       setLoginForm({
         password: "",
-        username: "",
+        email: "",
       });
       setIsLoggedIn(true);
+      localStorage.setItem("TokenSession", data.token);
+
       setSessionToken(data.token);
-      getProjects();
+      // getProjects();
     } catch (error) {
       alert(error);
     }
   };
   async function getProjects() {
     try {
-      const { data } = await axios.get("/api/projects");
+      const { data } = await axios.get(
+        process.env.NEXT_PUBLIC_API + "/projects"
+      );
       console.log("🚀 ~ file: index.tsx:53 ~ getProjects ~ data:", data);
-      setState(data.data);
+      setState(data);
     } catch (error) {
       console.log(error);
     }
@@ -57,11 +73,12 @@ export default function Home() {
   }, []);
 
   const [createProjectFrom, setCreateProjectFrom] = useState({
-    projectName: "",
-    imageUrl: "",
+    name: "",
+    img: "",
+    description: ""
   });
 
-  const handleProjectFormChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleProjectFormChange = (e: ChangeEvent<HTMLInputElement|HTMLTextAreaElement >) => {
     setCreateProjectFrom({
       ...createProjectFrom,
       [e.target.name]: e.target.value,
@@ -70,130 +87,198 @@ export default function Home() {
 
   const createProject = async () => {
     try {
-      const { data } = await axios.post("/api/projects", createProjectFrom, {
-        headers: {
-          token: sessionToken,
-        },
-      });
+      const { data } = await axios.post(
+        process.env.NEXT_PUBLIC_API + "/projects",
+        createProjectFrom,
+        {
+          headers: {
+            token: sessionToken,
+            Authorization: "Bearer " + sessionToken,
+          },
+        }
+      );
       setCreateProjectFrom({
-        imageUrl: "",
-        projectName: "",
+        img: "",
+        name: "",
+        description: "",
       });
-      console.log(data);
-      alert("projecto generado");
+      getProjects();
     } catch (error) {
       console.log(error);
     }
   };
+
+  const showModal = () => {
+    const { Modal } = require("bootstrap");
+    const myModal = new Modal("#exampleModal");
+
+    myModal.show();
+  };
+
+  const editModal = (_id: string, name:string, img: string, description:string ) => {
+    // edit modal
+    console.log(_id, name, img, description);
+    setCreateProjectFrom({
+      img,
+      name,
+      description,
+    });
+
+    showModal();
+  }
+  const deleteModal = async (_id: string ) => {
+    // edit modal
+    console.log(_id, "estoy dentro de deleteModal" );
+    const { data } = await axios.delete(
+      process.env.NEXT_PUBLIC_API + "/projects/"+ _id, 
+      {
+        headers: {
+          token: sessionToken,
+          Authorization: "Bearer " + sessionToken,
+        },
+      }
+    );
+    getProjects();
+    
+  }
 
   if (isLoggedIn)
     return (
       <>
         <div className="container">
           <div className="row">
-            
-              <div className="d-flex align-items-center p-3 my-3 text-white bg-black rounded shadow-sm ">
-                <img
-                  className="me-3"
-                  src="https://moon.ly/uploads/nft/clg20i5ys7518u5jsdr1xcqgx.png"
-                  alt=""
-                  width="48"
-                  height="38"
-                />
-                <div className="lh-1">
-                  <h1 className="h6 mb-0 text-white lh-1"></h1>
-                  <small></small>
-                </div>
+            <div className="d-flex align-items-center p-3 my-3 text-white bg-black rounded shadow-sm ">
+              <img
+                className="me-3"
+                src="https://moon.ly/uploads/nft/clg20i5ys7518u5jsdr1xcqgx.png"
+                alt=""
+                width="48"
+                height="38"
+              />
+              <div className="lh-1">
+                <h1 className="h6 mb-0 text-white lh-1">Bootstrap</h1>
+                <small>Since 2011</small>
               </div>
+            </div>
 
-              <div className="my-3 p-3 bg-body rounded shadow-sm">
-                <h6 className="border-bottom pb-2 mb-0 ">Proyectos</h6>
+            <div className="my-3 p-3 bg-body rounded shadow-sm">
+              <div className="row border-bottom">
+                <div className="col-9">
+                <h3 className=" pb-2 mb-0">Proyectos</h3>
+                </div>
+                <div className="col-3">
+                  <button type="button" className="btn btn-primary mb-2" onClick={showModal}>
+                    Crear proyecto
+                  </button>
+                </div> 
+              </div>
+             
 
-                {state
-                  ? state.map((p: any) => (
-                      <div
-                        key={p.id}
-                        className="d-flex text-body-secondary pt-3"
-                      >
-                        <svg
-                          className="bd-placeholder-img flex-shrink-0 me-2 rounded"
-                          width="32"
-                          height="32"
-                          xmlns="http://www.w3.org/2000/svg"
-                          role="img"
-                          aria-label="Placeholder: 32x32"
-                          preserveAspectRatio="xMidYMid slice"
-                          focusable="false"
-                        >
-                          <title>Placeholder</title>
-                          <rect
-                            width="100%"
-                            height="100%"
-                            fill="#33E459"
-                          ></rect>
-                          <text x="50%" y="50%" fill="#33E459" dy=".3em">
-                            32x32
-                          </text>
-                        </svg>
-
+              {state
+                ? state.map((p: any) => (
+                    <div key={p._id} className="d-flex text-body-secondary pt-3">
+                      <div className="col-1">
+                        <img
+                          width="48"
+                          height="38"
+                          className="bd-placeholder-img flex-shrink-0 me-2 rounded "
+                          src={p.img}
+                        />
+                      </div>
+                      <div className="col-10">
                         <p className="pb-3 mb-0 small lh-sm border-bottom">
-                          <strong className="d-block text-gray-dark">
-                            {" "}
-                            {p.projectName}
-                          </strong>
-                          Some representative placeholder content, with some
-                          information about this user. Imagine this being some
-                          sort of status update, perhaps?
+                        <strong className="d-block text-gray-dark">
+                          {p.name}
+                        </strong>
+                          {p.description}
                         </p>
                       </div>
-                    ))
-                  : ""}
+                      <div className="col-1">
+                        <i onClick={() => editModal(p._id, p.name, p.img, p.description)} className="fa-solid fa-pen-to-square cursor-pointer"></i>
+                        <i  onClick={() => deleteModal(p._id )} className="fa-solid fa-trash p-2 cursor-pointer"></i>
+                      </div>
+                    </div>
+                  ))
+                : ""}
 
-                <small className="d-block text-end mt-3 d-flex justify-content-center ">
-                  <a href="#">Crear nuevo</a>
-                </small>
-              </div>
-              <div className="d-flex justify-content-center">
-              <div className="col-6 ">
-              <p className="d-flex justify-content-center">FORMULARIO DE CREAR PROYECTO</p>
-              <div className="text-center ">
-                <label>Nombre de proyecto</label>
-                <form className="form-control">
-                  <input
-                    className="form-control"
-                    type="text"
-                    onChange={(e) => handleProjectFormChange(e)}
-                    name="projectName"
-                    value={createProjectFrom.projectName}
-                  />
-                  <label>url de la imagen</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    onChange={(e) => handleProjectFormChange(e)}
-                    name="imageUrl"
-                    value={createProjectFrom.imageUrl}
-                  />
-                  <button
-                    className="btn btn-primary mt-2 bg-success"
-                    onClick={createProject}
-                  >
-                    create project
-                  </button>
-                </form>
+              <small className="d-block text-end mt-3">
+                <button type="button" className="btn" onClick={showModal}>
+                  Crear proyecto
+                </button>
+              </small>
+            </div>
+            {/* modal              */}
+            <div className="d-flex">
+            
+              <div
+                className="modal fade"
+                id="exampleModal"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        Registro
+                      </h5>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div className="modal-body">
+                      <label>Nombre de proyecto</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        onChange={(e) => handleProjectFormChange(e)}
+                        name="name"
+                        value={createProjectFrom.name}
+                      />
+                      <label>url de la imagen</label>
+                      <input
+                        className="form-control"
+                        type="text"
+                        onChange={(e) => handleProjectFormChange(e)}
+                        name="img"
+                        value={createProjectFrom.img}
+                      />
+                      <label>Descripcion</label>
+                      <textarea name="description" 
+                       onChange={(e) => handleProjectFormChange(e)} 
+                       className="form-control"
+                       value={createProjectFrom.description}>
+                      </textarea>
+                      {/* <button
+                        className="btn btn-primary mt-2"
+                        onClick={createProject}
+                      >
+                        create project
+                      </button> */}
+                    </div>
+                    <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          data-bs-dismiss="modal"
+                        >
+                          Cerrar
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={createProject}
+                        >
+                          Guardar
+                        </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            </div>
-            {/* <ul>
-          {
-            state ? 
-          state.map((p: any) => (
-              <li key={p.id}>{p.projectName}</li>
-          ))
-          : ""
-          }
-          
-        </ul> */}
           </div>
         </div>
       </>
@@ -202,18 +287,18 @@ export default function Home() {
   return (
     <>
       <div className={styles.loginContainer}>
-        <form>
-          <h1 className="h3 mb-3 fw-normal">Panel de registro</h1>
-          <div className="form-floating ">
+        <div>
+          <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+          <div className="form-floating">
             <input
               type="email"
               className="form-control"
               placeholder="name@example.com"
-              name="username"
+              name="email"
               onChange={(e) => handleFormChange(e)}
-              value={loginForm.username}
+              value={loginForm.email}
             />
-            <label>Nombre de usuario</label>
+            <label>Email address</label>
           </div>
           <div className="form-floating">
             <input
@@ -225,35 +310,12 @@ export default function Home() {
               className="form-control"
               placeholder="Password"
             />
-            <label>Contraseña</label>
+            <label>Password</label>
           </div>
-          <button
-            onClick={handleSubmit}
-            className="btn btn-primary w-100 py-2 bg-success"
-            type="submit"
-          >
-            Iniciar sesión
+          <button onClick={handleSubmit} className="btn btn-primary w-100 py-2">
+            Sign in
           </button>
-        </form>
-
-        {/* <div className={styles.loginFormContainer}>
-          <label>username</label>
-          <input
-            type="text"
-            name="username"
-            onChange={(e) => handleFormChange(e)}
-            value={loginForm.username}
-          />
-          <label> password</label>
-          <input
-            type="password"
-            name="password"
-            id=""
-            value={loginForm.password}
-            onChange={(e) => handleFormChange(e)}
-          />
-          <button className="btn btn-primary" onClick={handleSubmit}>Login</button>
-        </div> */}
+        </div>
       </div>
     </>
   );
