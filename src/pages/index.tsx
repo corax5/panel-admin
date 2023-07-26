@@ -73,6 +73,7 @@ export default function Home() {
   }, []);
 
   const [createProjectFrom, setCreateProjectFrom] = useState({
+    _id: "",
     name: "",
     img: "",
     description: ""
@@ -87,7 +88,26 @@ export default function Home() {
 
   const createProject = async () => {
     try {
-      const { data } = await axios.post(
+      let edit = false;
+      if(createProjectFrom._id){
+        edit= true;
+      }
+      
+      if(edit) {
+        //logica para editar
+        const { data } = await axios.put(
+          process.env.NEXT_PUBLIC_API + "/projects/" + createProjectFrom._id,
+          createProjectFrom,
+          {
+            headers: {
+              token: sessionToken,
+              Authorization: "Bearer " + sessionToken,
+            },
+          }
+        );
+      } else {
+        //logica para crear
+        const { data } = await axios.post(
         process.env.NEXT_PUBLIC_API + "/projects",
         createProjectFrom,
         {
@@ -97,7 +117,9 @@ export default function Home() {
           },
         }
       );
+      };
       setCreateProjectFrom({
+        _id: "",
         img: "",
         name: "",
         description: "",
@@ -108,6 +130,15 @@ export default function Home() {
     }
   };
 
+const newProject = () => {
+  setCreateProjectFrom({
+    _id: "",
+    img: "",
+    name: "",
+    description: "",
+  });
+showModal();
+}
   const showModal = () => {
     const { Modal } = require("bootstrap");
     const myModal = new Modal("#exampleModal");
@@ -119,6 +150,7 @@ export default function Home() {
     // edit modal
     console.log(_id, name, img, description);
     setCreateProjectFrom({
+      _id,
       img,
       name,
       description,
@@ -156,8 +188,8 @@ export default function Home() {
                 height="38"
               />
               <div className="lh-1">
-                <h1 className="h6 mb-0 text-white lh-1">Bootstrap</h1>
-                <small>Since 2011</small>
+                <h1 className="h6 mb-0 text-white lh-1">Panel de proyectos</h1>
+                <small></small>
               </div>
             </div>
 
@@ -167,9 +199,6 @@ export default function Home() {
                 <h3 className=" pb-2 mb-0">Proyectos</h3>
                 </div>
                 <div className="col-3">
-                  <button type="button" className="btn btn-primary mb-2" onClick={showModal}>
-                    Crear proyecto
-                  </button>
                 </div> 
               </div>
              
@@ -202,9 +231,9 @@ export default function Home() {
                 : ""}
 
               <small className="d-block text-end mt-3">
-                <button type="button" className="btn" onClick={showModal}>
-                  Crear proyecto
-                </button>
+              <button type="button" className="btn btn-primary mb-2" onClick={newProject}>
+                    Crear proyecto
+                  </button>
               </small>
             </div>
             {/* modal              */}
@@ -252,12 +281,6 @@ export default function Home() {
                        className="form-control"
                        value={createProjectFrom.description}>
                       </textarea>
-                      {/* <button
-                        className="btn btn-primary mt-2"
-                        onClick={createProject}
-                      >
-                        create project
-                      </button> */}
                     </div>
                     <div className="modal-footer">
                         <button
