@@ -173,6 +173,10 @@ showModal();
     getProjects();
     
   }
+  const logOut= () => {
+    localStorage.removeItem('TokenSession');
+    location.reload();
+  }
 
   if (isLoggedIn)
     return (
@@ -189,10 +193,13 @@ showModal();
               />
               <div className="lh-1">
                 <h1 className="h6 mb-0 text-white lh-1">Panel de proyectos</h1>
-                <small></small>
+                <small></small><button type="button" className="btn btn-primary my-4 l-4" onClick={logOut}>
+                    LogOut
+                  </button>
+               
               </div>
             </div>
-
+ 
             <div className="my-3 p-3 bg-body rounded shadow-sm">
               <div className="row border-bottom">
                 <div className="col-9">
