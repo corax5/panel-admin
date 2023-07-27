@@ -181,9 +181,9 @@ showModal();
   if (isLoggedIn)
     return (
       <>
-        <div className="container">
+        <div className="container ">
           <div className="row">
-            <div className="d-flex align-items-center p-3 my-3 text-white bg-black rounded shadow-sm ">
+            <div className="d-flex align-items-center p-3 my-3 text-white bg-black rounded shadow-sm bg-info-subtle">
               <img
                 className="me-3"
                 src="https://moon.ly/uploads/nft/clg20i5ys7518u5jsdr1xcqgx.png"
@@ -198,8 +198,8 @@ showModal();
               </div>
             </div>
  
-            <div className="my-3 p-3 bg-body rounded shadow-sm">
-              <div className="row border-bottom">
+            <div className="my-3 p-3 bg-body rounded shadow-sm ">
+              <div className="row border-bottom ">
                 <div className="col-9">
                 <h3 className=" pb-2 mb-0">Proyectos</h3>
                 </div>
@@ -210,7 +210,7 @@ showModal();
 
               {state
                 ? state.map((p: any) => (
-                    <div key={p._id} className="d-flex text-body-secondary pt-3">
+                    <div key={p._id} className="d-flex text-body-secondary pt-3 ">
                       <div className="col-1">
                         <img
                           width="48"
@@ -320,7 +320,7 @@ showModal();
       <div className={styles.loginContainer}>
         <div>
           <h1 className="h3 mb-3 fw-normal text-primary">Please sign in</h1>
-          <div className="form-floating">
+          <div className="form-floating m-1">
             <input
               type="email"
               className="form-control"
@@ -331,7 +331,7 @@ showModal();
             />
             <label>Email address</label>
           </div>
-          <div className="form-floating ">
+          <div className="form-floating m-1 ">
             <input
               type="password"
               name="password"
@@ -343,7 +343,7 @@ showModal();
             />
             <label>Password</label>
           </div>
-          <button onClick={handleSubmit} className="btn btn-primary w-100 py-2">
+          <button onClick={handleSubmit} className="btn btn-primary w-100 py-2 m-1">
             Sign in
           </button>
         </div>
