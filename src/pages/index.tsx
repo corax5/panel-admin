@@ -193,9 +193,7 @@ showModal();
               />
               <div className="lh-1">
                 <h1 className="h6 mb-0 text-white lh-1">Panel de proyectos</h1>
-                <small></small><button type="button" className="btn btn-primary my-4 l-4" onClick={logOut}>
-                    LogOut
-                  </button>
+                <small></small>
                
               </div>
             </div>
@@ -237,7 +235,10 @@ showModal();
                   ))
                 : ""}
 
-              <small className="d-block text-end mt-3">
+              <small className="d-block text-end mt-3"><button type="button" className="btn btn-primary my-4 l-4 position-absolute top-0 end-20" onClick={logOut}>
+                    LogOut
+                  </button>
+                  
               <button type="button" className="btn btn-primary mb-2" onClick={newProject}>
                     Crear proyecto
                   </button>
@@ -318,7 +319,7 @@ showModal();
     <>
       <div className={styles.loginContainer}>
         <div>
-          <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
+          <h1 className="h3 mb-3 fw-normal text-primary">Please sign in</h1>
           <div className="form-floating">
             <input
               type="email"
@@ -330,7 +331,7 @@ showModal();
             />
             <label>Email address</label>
           </div>
-          <div className="form-floating">
+          <div className="form-floating ">
             <input
               type="password"
               name="password"
